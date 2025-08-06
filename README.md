@@ -38,4 +38,4 @@ El sistema ofrece los siguientes menús interactivos:
 
 * **Autor**: Pablo Andrés Moncayo Vega
 
-* **Licencia**:  Der
+* **Licencia**:  Derechos Reservados
