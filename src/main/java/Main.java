@@ -19,17 +19,22 @@ public class Main {
     private static ArrayList<Cliente> listaClientes = new ArrayList<>();
 
     // Definición de los menús
-    private static final String menuMain = "***MENÚ PRINCIPAL***\n1.Ventas\n2.Gestión de clientes\n3.Gestión de producto\n4.Salir";
-    private static final String menuClientes = "***MENÚ DE GESTIÓN CLIENTES***\n1.Alta de clientes\n2.Baja de clientes\n3.Modificación\n4.Buscar por DNI\n5.Lista de clientes\n6.Volver";
-    private static final String menuProducto = "***MENÚ DE GESTIÓN DE PRODUCTOS***\n1.Alta de producto\n2.Ver inventario \n3.Buscar por % de cacao\n4.Buscar por origen\n5.Volver";
-    private static final String menuVentas = "***MENÚ DE GESTIÓN DE VENTAS***\n1.Nueva venta\n2.Mostrar todas las ventas\n3.Mostrar ventas por cliente\n4.Mostrar una venta\n5.Volver";
-    private static final String menuModificarCliente = "***MODIFICAR CLIENTE***\n1.Modificar nombre\n2.Modificar apellidos\n3.Modificar teléfono\n4.Modificar email\n5.Volver";
+    private static final String menuMain = "***MENÚ PRINCIPAL***\n1.Ventas\n2.Gestión de clientes\n" +
+            "3.Gestión de producto\n4.Salir";
+    private static final String menuClientes = "***MENÚ DE GESTIÓN CLIENTES***\n1.Alta de clientes\n2.Baja de clientes\n" +
+            "3.Modificación\n4.Buscar por DNI\n5.Lista de clientes\n6.Volver";
+    private static final String menuProducto = "***MENÚ DE GESTIÓN DE PRODUCTOS***\n1.Alta de producto\n" +
+            "2.Ver inventario\n3.Buscar por % de cacao\n4.Buscar por origen\n5.Volver";
+    private static final String menuVentas = "***MENÚ DE GESTIÓN DE VENTAS***\n1.Nueva venta\n" +
+            "2.Mostrar todas las ventas\n3.Mostrar ventas por cliente\n4.Mostrar una venta\n5.Volver";
+    private static final String menuModificarCliente = "***MODIFICAR CLIENTE***\n1.Modificar nombre\n" +
+            "2.Modificar apellidos\n3.Modificar teléfono\n4.Modificar email\n5.Volver";
 
     /**
-     * Punto de entrada del programa.
-     * Muestra el menú principal y luego muestra un submenú según la opción seleccionada.
+     * Punto de inicio del programa.
+     * Muestra el menú principal y luego muestra un submenú según la opción seleccionada por el usuario.
      *
-     * @param args Sin argumentos.
+     * @param args No necesita argumentos.
      */
     public static void main(String[] args) {
         int opcion;
@@ -65,7 +70,8 @@ public class Main {
     }
 
     /**
-     * Pide el número de una opción al usuario dentro de un rango válido.
+     * Pide el número de una opción al usuario dentro de un rango válido(el número de
+     * opciones presentadas en el menú).
      * Gestiona errores de entrada y repite hasta que reciba un valor válido.
      *
      * @param min Número mínimo aceptado.
@@ -79,7 +85,7 @@ public class Main {
         while (!valida) {
             try {
                 opcion = scanner.nextInt();
-                scanner.nextLine(); // Limpiar el buffer
+                scanner.nextLine(); // Limpia el buffer
                 if (opcion < min || opcion > max) {
                     System.out.println("Opción fuera de rango. Intenta de nuevo.");
                     System.out.print("Selecciona una opción: ");
@@ -88,7 +94,7 @@ public class Main {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, introduce un número.");
-                scanner.nextLine(); // Limpiar buffer
+                scanner.nextLine(); // Limpia el buffer
                 System.out.print("Selecciona una opción: ");
             }
         }

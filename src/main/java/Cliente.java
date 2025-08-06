@@ -4,13 +4,13 @@ import java.util.InputMismatchException;
 
 /**
  * Clase que representa a un cliente de la tienda.
- * Cada cliente tiene un DNI único, nombre, apellidos, teléfono y dirección de correo electrónico.
+ * Cada cliente tiene un DNI, nombre, apellidos, teléfono y dirección de correo electrónico.
  *
- * Incluye además, métodos estáticos para gestionar la lista de clientes:
- * alta, baja, modificación, búsqueda y listado.
+ * Incluye además, las funciones para gestionar la lista de clientes:
+ * alta, baja, modificación, búsqueda por DNI y listado.
  *
- * @author Pablo Andrés moncayo Vega
- * @version 1.0
+ * @author Pablo Andrés Moncayo Vega
+ * @version 1.1 (Refactorizada para reutilizar código de búsqueda)
  */
 public class Cliente {
     private String dni;
@@ -24,7 +24,7 @@ public class Cliente {
     private static final String menuModificarCliente = "***MODIFICAR CLIENTE***\n1.Modificar nombre\n2.Modificar apellidos\n3.Modificar teléfono\n4.Modificar email\n5.Volver";
 
     /**
-     * Constructor de la clase Cliente.
+     * Declaro el constructor de la clase Cliente.
      *
      * @param dni DNI del cliente (debe ser único).
      * @param nombre Nombre del cliente.
@@ -32,7 +32,6 @@ public class Cliente {
      * @param telefono Teléfono del cliente.
      * @param email La dirección de correo electrónico del cliente.
      */
-
     public Cliente(String dni, String nombre, String apellidos, String telefono, String email) {
         this.dni = dni;
         this.nombre = nombre;
@@ -41,7 +40,7 @@ public class Cliente {
         this.email = email;
     }
 
-    //Getters y Setters de la clase Cliente
+    //Declaro los getters y Setters de la clase Cliente
     public String getNombre() {
         return nombre;
     }
@@ -83,7 +82,7 @@ public class Cliente {
     }
 
     /**
-     * Compara este objeto Cliente con otro basado en su DNI.
+     * Compara el DNI de este objeto Cliente con los demás de la lista.
      *
      * @param obj El objeto a comparar.
      * @return true si los DNI son iguales (ignorando mayúsculas/minúsculas), false en caso contrario.
@@ -96,7 +95,6 @@ public class Cliente {
         return false;
     }
 
-
     // --Funciones estáticas para gestionar la lista de clientes--
 
     /**
@@ -108,8 +106,8 @@ public class Cliente {
     public static void gestionarClientes(ArrayList<Cliente> listaClientes, Scanner scanner) {
         int opcionClientes;
         do {
-            imprimirMenu(menuClientes);
-            opcionClientes = recibirOpcion(scanner, 1, 6);
+            Main.imprimirMenu(menuClientes);
+            opcionClientes = Main.recibirOpcion(1, 6);
 
             switch (opcionClientes) {
                 case 1 -> altaCliente(listaClientes, scanner);
@@ -123,44 +121,21 @@ public class Cliente {
     }
 
     /**
-     * Muestra un menú en consola.
+     * Busca un cliente en la lista por su DNI.
+     * Esta función será reutilizada y evitará redundancia de código
+     * dentro de las otras funciones
      *
-     * @param menu Nombre de la variable con el texto del menú que a imprimir.
+     * @param listaClientes La lista de clientes donde buscar.
+     * @param dni El DNI del cliente a encontrar.
+     * @return El objeto Cliente si se encuentra, de lo contrario devuelve null.
      */
-    private static void imprimirMenu(String menu) {
-        System.out.println(menu);
-        System.out.print("Selecciona una opción: ");
-    }
-
-    /**
-     * Pide número de opción al usuario dentro de un rango válido.
-     * Gestiona errores de entrada y repite hasta que reciba un valor válido.
-     *
-     * @param scanner Objeto Scanner para leer la entrada del usuario.
-     * @param min Número mínimo aceptado.
-     * @param max Número máximo aceptado.
-     * @return Número de opción elegido por el usuario.
-     */
-    private static int recibirOpcion(Scanner scanner, int min, int max) {
-        int opcion = 0;
-        boolean valida = false;
-        while (!valida) {
-            try {
-                opcion = scanner.nextInt();
-                scanner.nextLine(); // Limpiar el buffer
-                if (opcion < min || opcion > max) {
-                    System.out.println("Opción fuera de rango. Intenta de nuevo.");
-                    System.out.print("Selecciona una opción: ");
-                } else {
-                    valida = true;
-                }
-            } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, introduce un número.");
-                scanner.nextLine(); // Limpiar buffer
-                System.out.print("Selecciona una opción: ");
+    static Cliente encontrarClientePorDni(ArrayList<Cliente> listaClientes, String dni) {
+        for (Cliente cliente : listaClientes) {
+            if (cliente.getDni().equalsIgnoreCase(dni)) {
+                return cliente;
             }
         }
-        return opcion;
+        return null;
     }
 
     /**
@@ -174,11 +149,9 @@ public class Cliente {
         System.out.print("Introduce el DNI: ");
         String dni = scanner.nextLine();
 
-        for (Cliente c : listaClientes) {
-            if (c.getDni().equalsIgnoreCase(dni)) {
-                System.out.println("Ya existe un cliente con ese DNI.");
-                return;
-            }
+        if (encontrarClientePorDni(listaClientes, dni) != null) {
+            System.out.println("Ya existe un cliente con ese DNI.");
+            return;
         }
 
         System.out.print("Introduce el nombre: ");
@@ -194,6 +167,8 @@ public class Cliente {
         listaClientes.add(nuevoCliente);
 
         System.out.println("Cliente " + nombre + " " + apellidos + " dado de alta correctamente.");
+        System.out.println();
+
     }
 
     /**
@@ -207,13 +182,7 @@ public class Cliente {
         System.out.print("Introduce el DNI del cliente a eliminar: ");
         String dni = scanner.nextLine();
 
-        Cliente clienteEncontrado = null;
-        for(Cliente c : listaClientes) {
-            if(c.getDni().equalsIgnoreCase(dni)) {
-                clienteEncontrado = c;
-                break;
-            }
-        }
+        Cliente clienteEncontrado = encontrarClientePorDni(listaClientes, dni);
 
         if (clienteEncontrado != null) {
             listaClientes.remove(clienteEncontrado);
@@ -221,6 +190,7 @@ public class Cliente {
         } else {
             System.out.println("Cliente no encontrado.");
         }
+        System.out.println();
     }
 
     /**
@@ -230,48 +200,46 @@ public class Cliente {
      * @param scanner El objeto Scanner para leer la entrada del usuario.
      */
     public static void modificarCliente(ArrayList<Cliente> listaClientes, Scanner scanner) {
-        String menuModificarCliente = "***MODIFICAR CLIENTE***\n1.Modificar nombre\n2.Modificar apellidos\n3.Modificar teléfono\n4.Modificar email\n5.Volver";
         System.out.println("\n--- MODIFICAR CLIENTE ---");
         System.out.print("Introduce el DNI del cliente a modificar: ");
         String dniModificar = scanner.nextLine();
 
-        Cliente clienteAModificar = null;
-        for (Cliente cliente : listaClientes) {
-            if (cliente.getDni().equals(dniModificar)) {
-                clienteAModificar = cliente;
-                break;
-            }
-        }
+        Cliente clienteAModificar = encontrarClientePorDni(listaClientes, dniModificar);
 
         if (clienteAModificar != null) {
             int opcionModificacion;
             do {
-                imprimirMenu(menuModificarCliente);
-                opcionModificacion = recibirOpcion(scanner, 1, 5);
+                Main.imprimirMenu(menuModificarCliente);
+                opcionModificacion = Main.recibirOpcion(1, 5);
 
                 switch (opcionModificacion) {
                     case 1 -> {
                         System.out.print("Introduce el nuevo nombre: ");
                         clienteAModificar.setNombre(scanner.nextLine());
                         System.out.println("Nombre modificado correctamente.");
+                        System.out.println();
                     }
                     case 2 -> {
                         System.out.print("Introduce los nuevos apellidos: ");
                         clienteAModificar.setApellidos(scanner.nextLine());
                         System.out.println("Apellidos modificados correctamente.");
+                        System.out.println();
                     }
                     case 3 -> {
                         System.out.print("Introduce el nuevo teléfono: ");
                         clienteAModificar.setTelefono(scanner.nextLine());
                         System.out.println("Teléfono modificado correctamente.");
+                        System.out.println();
                     }
                     case 4 -> {
                         System.out.print("Introduce el nuevo email: ");
                         clienteAModificar.setEmail(scanner.nextLine());
                         System.out.println("Email modificado correctamente.");
+                        System.out.println();
                     }
                     case 5 -> {
                         System.out.println("Volviendo al menú de gestión de clientes.");
+                        System.out.println();
                     }
                 }
             } while (opcionModificacion != 5);
@@ -291,13 +259,7 @@ public class Cliente {
         System.out.print("Introduce el DNI del cliente a buscar: ");
         String dniBuscar = scanner.nextLine();
 
-        Cliente clienteEncontrado = null;
-        for (Cliente cliente : listaClientes) {
-            if (cliente.getDni().equalsIgnoreCase(dniBuscar)) {
-                clienteEncontrado = cliente;
-                break;
-            }
-        }
+        Cliente clienteEncontrado = encontrarClientePorDni(listaClientes, dniBuscar);
 
         if (clienteEncontrado != null) {
             System.out.println("Cliente encontrado:");
@@ -305,6 +267,7 @@ public class Cliente {
         } else {
             System.out.println("No se encontró ningún cliente con ese DNI.");
         }
+        System.out.println();
     }
 
     /**
@@ -321,6 +284,6 @@ public class Cliente {
                 System.out.println(cliente.toString());
             }
         }
+        System.out.println();
     }
 }
-
