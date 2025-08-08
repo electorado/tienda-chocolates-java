@@ -5,20 +5,16 @@ import java.util.Scanner;
 /**
  * Clase principal del programa de gestión de una tienda de chocolates.
  * Contiene funciones reutilizables como imprimirMenu y recibirOpcion,
- * y dirige el flujo principal de la aplicación.
+ * Incluye una función para precargar datos de prueba para probar la aplicación facilmente.
  *
  * @author Pablo Andrés Moncayo Vega
- * @version 2.0(los menús de gestión de Ventas, Clientes y Productos
- * van a su Clase respectiva.
+ * @version 3.0 (Añadida función para cargar datos de prueba)
  */
 public class Main {
 
-    // --- Listas principales de la aplicación ---
     private static ArrayList<Cliente> listaClientes = new ArrayList<>();
     private static ArrayList<Chocolate> catalogoChocolates = new ArrayList<>();
     private static ArrayList<Venta> listaVentas = new ArrayList<>();
-
-    // --- Objeto Scanner global ---
     private static Scanner scanner = new Scanner(System.in);
 
     /**
@@ -32,40 +28,48 @@ public class Main {
 
     /**
      * Punto de inicio del programa.
-     * Muestra el menú principal y gestiona la navegación a los submenús.
-     *
-     * @param args no se utilizan.
+     * Carga los datos de prueba y muestra el menú principal.
      */
     public static void main(String[] args) {
+        cargarDatosDePrueba();
+
         int opcion;
         do {
             imprimirMenu(menuMain);
             opcion = recibirOpcion(1, 4);
 
             switch (opcion) {
-                case 1 -> {
-                    // Venta.gestionarVentas(listaVentas, listaClientes, catalogoChocolates, scanner);
-                    System.out.println("Gestión de ventas no implementada todavía.");
-                }
+                case 1 -> Venta.gestionarVentas(listaVentas, listaClientes, catalogoChocolates, scanner);
                 case 2 -> Cliente.gestionarClientes(listaClientes, scanner);
-                case 3 -> {
-                    // Chocolate.gestionarProductos(catalogoChocolates, scanner);
-                    System.out.println("Gestión de productos no implementada todavía.");
-                }
-                case 4 -> System.out.println("¡Saliendo de la aplicación! Hasta pronto.");
+                case 3 -> Chocolate.gestionarProductos(catalogoChocolates, scanner);
+                case 4 -> System.out.println("¡Gracias por usar la aplicación! Hasta pronto.");
             }
         } while (opcion != 4);
 
         scanner.close();
     }
 
-    // --- Métodos de ayuda reutilizables ---
+    /**
+     * Crea y añade 3 clientes y 3 productos a las listas
+     * para que la aplicación no empiece vacía.
+     */
+    public static void cargarDatosDePrueba() {
+        listaClientes.add(new Cliente("1111111A", "Claudia", "García", "611111111", "cg@suemail.com"));
+        listaClientes.add(new Cliente("2222222B", "Santiago", "Sanchez", "622222222", "ss@suemail.com"));
+        listaClientes.add(new Cliente("3333333C", "Sofía", "Terán", "633333333", "st@suemail.com"));
+
+        catalogoChocolates.add(new Chocolate("Ecuador", 75, 5.50, 20));
+        catalogoChocolates.add(new Chocolate("Costa Rica", 85, 6.20, 15));
+        catalogoChocolates.add(new Chocolate("Ghana", 70, 5.00, 30));
+
+        System.out.println(">>> Datos de prueba cargados: 3 clientes y 3 productos disponibles. <<<");
+    }
+
+    // --- Funciones ---
 
     /**
      * Muestra un menú en consola y pide una opción al usuario.
-     * Función pública y estática para que pueda ser reutilizada por otras clases.
-     *
-     * @param menu La cadena de texto del menú a imprimir.
+     * @param menu Nombre del menú a imprimir.
      */
     public static void imprimirMenu(String menu) {
         System.out.println("\n" + menu);
@@ -74,8 +78,6 @@ public class Main {
 
     /**
      * Pide al usuario un número de opción dentro de un rango válido.
-     * Función pública y estática para que pueda ser reutilizada por otras clases.
-     *
      * @param min El número mínimo aceptado para la opción.
      * @param max El número máximo aceptado para la opción.
      * @return El número de opción validado.
