@@ -1,198 +1,146 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
- * La clase principal `Main` contiene el punto de entrada de la aplicación.
- * Desde aquí se gestionan los menús principales y secundarios para interactuar con
- * las funcionalidades de la tienda de chocolate.
+ * Clase principal del programa de gestión de una tienda de chocolates.
+ * Contiene funciones reutilizables y el punto de entrada de la aplicación.
  *
  * @author Pablo Andrés Moncayo Vega
- * @version 1.0
+ * @version 5.0 (Incluye función para ordenar listas de clientes, productos y ventas.)
  */
 public class Main {
 
+    // --- Listas principales de la aplicación ---
+    private static ArrayList<Cliente> listaClientes = new ArrayList<>();
+    private static ArrayList<Chocolate> catalogoChocolates = new ArrayList<>();
+    private static ArrayList<Venta> listaVentas = new ArrayList<>();
+
+    // --- Objeto Scanner global ---
+    private static Scanner scanner = new Scanner(System.in);
+
+    // --- Menús de la aplicación ---
+    private static String menuMain = "*** MENÚ PRINCIPAL ***\n" +
+            "1. Gestión de Ventas\n2. Gestión de Clientes\n3. Gestión de Productos\n4. Ordenar y Listar\n5. Salir";
+
+    private static String menuOrdenar = "--- ORDENAR LISTAS ---\n1. Ordenar Clientes\n2. Ordenar Productos\n3. Volver";
+    private static String menuOrdenarClientes = "Ordenar clientes por:\n1. DNI\n2. Nombre\n3. Apellidos";
+    private static String menuOrdenarProductos = "Ordenar productos por:\n1. ID\n2. Origen\n3. Precio\n4. Stock";
+
+
     /**
-     * Este es el método principal del programa. Desde aquí se ejecuta
-     * toda la lógica de la aplicación.
-     *
-     * @param args Argumentos de la línea de comandos (no se usan en este programa).
+     * Punto de inicio del programa.
+     * Carga los datos de prueba y muestra el menú principal.
      */
     public static void main(String[] args) {
-        // Declaración de los ArrayLists para almacenar los objetos
-        // Aquí es donde guardas todos los clientes, chocolates y ventas.
-        ArrayList<Cliente> listaClientes = new ArrayList<>();
-        ArrayList<Chocolate> catalogoChocolates = new ArrayList<>();
-        ArrayList<Venta> listaVentas = new ArrayList<>();
-
-        Scanner scanner = new Scanner(System.in);
-
-        // Variables String para los menús.
-        // Aquí se definen los textos de los menús que se mostrarán al usuario.
-        String menuMain = "***MENÚ PRINCIPAL***\n1.Gestión de clientes\n2.Gestión de productos\n3.Realizar venta\n4.Mostrar ventas\n5.Salir";
-        String menuClientes = "***MENÚ DE GESTIÓN CLIENTES***\n1.Alta de clientes\n2.Baja de clientes\n3.Modificación\n4.Buscar por DNI\n5.Lista de clientes\n6.Volver";
-        String menuProducto = "***MENÚ DE GESTIÓN DE PRODUCTOS***\n1.Alta de producto\n2.Ver inventario \n3.Buscar por % de cacao\n4.Buscar por origen\n5.Volver";
-        String menuVentas = "***MENÚ DE GESTIÓN DE VENTAS***\n1.Nueva venta\n2.Mostrar ventas\n3.Mostrar ventas por cliente\n4.Mostrar una venta\n5.Volver";
+        cargarDatosDePrueba();
 
         int opcion;
-
         do {
-            opcion = 0; // Se inicializa para que el bucle se ejecute al menos una vez
-            System.out.println(menuMain);
-            System.out.print("Selecciona una opción: ");
-
-            try {
-                opcion = scanner.nextInt();
-                scanner.nextLine(); // Limpiar el buffer del scanner
-                if (opcion < 1 || opcion > 5) {
-                    System.out.println("Opción fuera de rango. Por favor, intenta de nuevo.");
-                    opcion = 0; // Se resetea para que el bucle se repita
-                }
-            } catch (java.util.InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, introduce un número.");
-                scanner.nextLine();
-            }
+            imprimirMenu(menuMain);
+            opcion = recibirOpcion(1, 5);
 
             switch (opcion) {
-                case 1 -> {
-                    // Entra en el submenú de Gestión de clientes
-                    int opcionClientes;
-                    do {
-                        opcionClientes = 0;
-                        System.out.println(menuClientes);
-                        System.out.print("Selecciona una opción: ");
-                        try {
-                            opcionClientes = scanner.nextInt();
-                            scanner.nextLine();
-                            if (opcionClientes < 1 || opcionClientes > 6) {
-                                System.out.println("Opción fuera de rango. Por favor, intenta de nuevo.");
-                                opcionClientes = 0;
-                            }
-                        } catch (java.util.InputMismatchException e) {
-                            System.out.println("Entrada inválida. Por favor, introduce un número.");
-                            scanner.nextLine();
-                        }
-
-                        switch (opcionClientes) {
-                            case 1 -> {
-                                // TODO: llamar a la función altaCliente();
-                                System.out.println("Has seleccionado Dar de alta cliente.");
-                            }
-                            case 2 -> {
-                                // TODO: llamar a la función bajaCliente();
-                                System.out.println("Has seleccionado Dar de baja cliente.");
-                            }
-                            case 3 -> {
-                                // TODO: llamar a la función modificarCliente();
-                                System.out.println("Has seleccionado Modificar cliente.");
-                            }
-                            case 4 -> {
-                                // TODO: llamar a la función buscarCliente();
-                                System.out.println("Has seleccionado Buscar cliente por DNI.");
-                            }
-                            case 5 -> {
-                                // TODO: llamar a la función listarClientes();
-                                System.out.println("Has seleccionado Lista de clientes.");
-                            }
-                            case 6 -> {
-                                System.out.println("Volviendo al menú principal.");
-                            }
-                        }
-                    } while (opcionClientes != 6);
-                }
-                case 2 -> {
-                    // Aquí entras en el submenú de Gestión de chocolates
-                    int opcionProductos;
-                    do {
-                        opcionProductos = 0;
-                        System.out.println(menuProducto);
-                        System.out.print("Selecciona una opción: ");
-                        try {
-                            opcionProductos = scanner.nextInt();
-                            scanner.nextLine();
-                            if (opcionProductos < 1 || opcionProductos > 5) {
-                                System.out.println("Opción fuera de rango. Por favor, intenta de nuevo.");
-                                opcionProductos = 0;
-                            }
-                        } catch (java.util.InputMismatchException e) {
-                            System.out.println("Entrada inválida. Por favor, introduce un número.");
-                            scanner.nextLine();
-                        }
-
-                        switch (opcionProductos) {
-                            case 1 -> {
-                                // TODO: llamar a la función altaChocolate();
-                                System.out.println("Has seleccionado Dar de alta chocolate.");
-                            }
-                            case 2 -> {
-                                // TODO: llamar a la función listarCatalogo();
-                                System.out.println("Has seleccionado Listar catálogo.");
-                            }
-                            case 3 -> {
-                                // TODO: llamar a la función buscarChocolatePorPorcentaje();
-                                System.out.println("Has seleccionado Buscar por % de cacao.");
-                            }
-                            case 4 -> {
-                                // TODO: llamar a la función buscarChocolatePorOrigen();
-                                System.out.println("Has seleccionado Buscar por origen.");
-                            }
-                            case 5 -> {
-                                System.out.println("Volviendo al menú principal.");
-                            }
-                        }
-                    } while (opcionProductos != 5);
-                }
-                case 3 -> {
-                    // Lógica para realizar una venta (opción del menú principal)
-                    System.out.println("\n--- REALIZAR VENTA ---");
-                    // TODO: llamar a la función realizarVenta();
-                }
-                case 4 -> {
-                    // Aquí entras en el submenú de Mostrar ventas
-                    int opcionVentas;
-                    do {
-                        opcionVentas = 0;
-                        System.out.println(menuVentas);
-                        System.out.print("Selecciona una opción: ");
-                        try {
-                            opcionVentas = scanner.nextInt();
-                            scanner.nextLine();
-                            if (opcionVentas < 1 || opcionVentas > 5) {
-                                System.out.println("Opción fuera de rango. Por favor, intenta de nuevo.");
-                                opcionVentas = 0;
-                            }
-                        } catch (java.util.InputMismatchException e) {
-                            System.out.println("Entrada inválida. Por favor, introduce un número.");
-                            scanner.nextLine();
-                        }
-                        switch (opcionVentas) {
-                            case 1 -> {
-                                // TODO: llamar a la función nuevaVenta();
-                                System.out.println("Has seleccionado Nueva venta.");
-                            }
-                            case 2 -> {
-                                // TODO: llamar a la función mostrarTodasLasVentas();
-                                System.out.println("Has seleccionado Mostrar ventas.");
-                            }
-                            case 3 -> {
-                                // TODO: llamar a la función mostrarVentasPorCliente();
-                                System.out.println("Has seleccionado Mostrar ventas por cliente.");
-                            }
-                            case 4 -> {
-                                // TODO: llamar a la función mostrarUnaVenta();
-                                System.out.println("Has seleccionado Mostrar una venta.");
-                            }
-                            case 5 -> {
-                                System.out.println("Volviendo al menú principal.");
-                            }
-                        }
-                    } while (opcionVentas != 5);
-                }
-                case 5 -> {
-                    System.out.println("Saliendo del programa. ¡Hasta pronto!");
-                }
+                case 1 -> Venta.gestionarVentas(listaVentas, listaClientes, catalogoChocolates, scanner);
+                case 2 -> Cliente.gestionarClientes(listaClientes, scanner);
+                case 3 -> Chocolate.gestionarProductos(catalogoChocolates, scanner);
+                case 4 -> ordenarListas();
+                case 5 -> System.out.println("¡Gracias por usar la aplicación! Hasta pronto.");
             }
         } while (opcion != 5);
 
         scanner.close();
+    }
+
+    /**
+     * Muestra un submenú para elegir qué lista ordenar y por qué campo.
+     */
+    public static void ordenarListas() {
+        int opcion;
+        do {
+            imprimirMenu(menuOrdenar);
+            opcion = recibirOpcion(1, 3);
+            switch (opcion) {
+                case 1 -> {
+                    imprimirMenu(menuOrdenarClientes);
+                    int opcionCliente = recibirOpcion(1, 3);
+                    switch (opcionCliente) {
+                        case 1 -> listaClientes.sort(Comparator.comparing(Cliente::getDni));
+                        case 2 -> listaClientes.sort(Comparator.comparing(Cliente::getNombre));
+                        case 3 -> listaClientes.sort(Comparator.comparing(Cliente::getApellidos));
+                    }
+                    System.out.println("--- Clientes Ordenados ---");
+                    Cliente.listarClientes(listaClientes);
+                }
+                case 2 -> {
+                    imprimirMenu(menuOrdenarProductos);
+                    int opcionProducto = recibirOpcion(1, 4);
+                    switch (opcionProducto) {
+                        case 1 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getIdProducto));
+                        case 2 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getOrigen));
+                        case 3 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getPrecio));
+                        case 4 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getStock).reversed());
+                    }
+                    System.out.println("--- Productos Ordenados ---");
+                    Chocolate.verInventario(catalogoChocolates);
+                }
+                case 3 -> System.out.println("Volviendo al menú principal.");
+            }
+        } while (opcion != 3);
+    }
+
+    /**
+     * Carga datos de prueba para que la aplicación no empiece vacía.
+     */
+    public static void cargarDatosDePrueba() {
+        listaClientes.add(new Cliente("1111111A", "Claudia", "García", "611111111", "cg@suemail.com"));
+        listaClientes.add(new Cliente("3333333C", "Sofía", "Terán", "633333333", "st@suemail.com"));
+        listaClientes.add(new Cliente("2222222B", "Santiago", "Sanchez", "622222222", "ss@suemail.com"));
+
+        catalogoChocolates.add(new Chocolate("Ecuador", 75, 5.50, 20));
+        catalogoChocolates.add(new Chocolate("Costa Rica", 85, 6.20, 15));
+        catalogoChocolates.add(new Chocolate("Ghana", 70, 5.00, 30));
+
+        System.out.println(">>> Datos de prueba cargados: 3 clientes y 3 productos disponibles. <<<");
+    }
+
+    // --- Funciones ---
+
+    /**
+     * Muestra un menú en consola y pide una opción al usuario.
+     * @param menu Nombre del menú a imprimir.
+     */
+    public static void imprimirMenu(String menu) {
+        System.out.println("\n" + menu);
+        System.out.print("Selecciona una opción: ");
+    }
+
+    /**
+     * Pide al usuario un número de opción dentro de un rango válido.
+     * @param min El número mínimo aceptado para la opción.
+     * @param max El número máximo aceptado para la opción.
+     * @return El número de opción validado.
+     */
+    public static int recibirOpcion(int min, int max) {
+        int opcion = 0;
+        boolean valida = false;
+        while (!valida) {
+            try {
+                opcion = scanner.nextInt();
+                scanner.nextLine();
+                if (opcion < min || opcion > max) {
+                    System.out.println("Opción fuera de rango. Intenta de nuevo.");
+                    System.out.print("Selecciona una opción: ");
+                } else {
+                    valida = true;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Por favor, introduce un número.");
+                scanner.nextLine();
+                System.out.print("Selecciona una opción: ");
+            }
+        }
+        return opcion;
     }
 }
