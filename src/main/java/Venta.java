@@ -5,21 +5,20 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- * Clase que representa una venta en la tienda de chocolate.
+ * Clase que representa a una venta en la tienda.
  * Cada venta tiene un ID único, un cliente asociado, una lista de productos vendidos y una fecha.
- * Utiliza métodos de ayuda de la clase Main para la interacción con el usuario.
+ * Utiliza funciones de la clase Main para la interacción con el usuario.
  *
  * @author Pablo Andrés Moncayo Vega
- * @version 1.0
+ * @version 2.0 (Mejorado el flujo de ventas por cliente: no se selecciona por lista, sino por DNI)
  */
 public class Venta {
 
-    private static int proximoId = 1; // Contador para generar IDs únicos
+    private static int proximoId = 1;
     private int idVenta;
     private Cliente cliente;
     private ArrayList<Chocolate> chocolatesVendidos;
     private LocalDate fechaVenta;
-
 
     private static final String menuVentas = "*** GESTIÓN DE VENTAS ***\n" +
             "1. Realizar venta\n" +
@@ -35,7 +34,6 @@ public class Venta {
 
     /**
      * Constructor para una venta nueva.
-     * Asigna un ID autoincremental y la fecha actual a la transacción.
      *
      * @param cliente El cliente que realiza la compra.
      * @param chocolatesVendidos La lista de chocolates que se han vendido.
@@ -47,14 +45,15 @@ public class Venta {
         this.fechaVenta = LocalDate.now();
     }
 
-    // --- Getters (no hay setters para mantener la inmutabilidad) ---
+    // --- Getters ---
+    //No pongo setters: por principio los datos de una venta no deberían poder modificarse
     public int getIdVenta() { return idVenta; }
     public Cliente getCliente() { return cliente; }
     public ArrayList<Chocolate> getChocolatesVendidos() { return chocolatesVendidos; }
     public LocalDate getFechaVenta() { return fechaVenta; }
 
     /**
-     * Calcula y devuelve el importe total de la venta sumando el precio de todos los chocolates vendidos.
+     * Calcula y devuelve el importe total de la venta.
      *
      * @return El coste total de la venta.
      */
@@ -66,11 +65,6 @@ public class Venta {
         return total;
     }
 
-    /**
-     * Devuelve una representación detallada de la venta en formato de texto.
-     *
-     * @return Una cadena formateada con todos los detalles de la venta.
-     */
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -84,16 +78,8 @@ public class Venta {
         return ticket;
     }
 
-    // --- Funciones estáticas para gestionar las ventas ---
+    // --- Funciones para la gestion de ventas ---
 
-    /**
-     * Muestra el menú de gestión de ventas y dirige a la función correspondiente.
-     *
-     * @param listaVentas El historial completo de ventas.
-     * @param listaClientes La lista de clientes registrados.
-     * @param catalogoChocolates El inventario de productos.
-     * @param scanner El objeto Scanner para la entrada del usuario.
-     */
     public static void gestionarVentas(ArrayList<Venta> listaVentas, ArrayList<Cliente> listaClientes, ArrayList<Chocolate> catalogoChocolates, Scanner scanner) {
         int opcion;
         do {
@@ -110,30 +96,61 @@ public class Venta {
 
     /**
      * Guía al usuario a través del proceso de creación de una nueva venta.
+     * Permite identificar al cliente por DNI o crear uno nuevo.
      */
     public static void crearNuevaVenta(ArrayList<Venta> listaVentas, ArrayList<Cliente> listaClientes, ArrayList<Chocolate> catalogoChocolates, Scanner scanner) {
         System.out.println("\n--- REALIZAR VENTA ---");
 
-        if (listaClientes.isEmpty()) {
-            System.out.println("Error: No hay clientes registrados. Cree un cliente primero.");
-            return;
-        }
         if (catalogoChocolates.isEmpty()) {
             System.out.println("Error: No hay productos en el catálogo. Añada productos primero.");
             return;
         }
 
-        System.out.println("Seleccione un cliente:");
-        for (int i = 0; i < listaClientes.size(); i++) {
-            System.out.println((i + 1) + ". " + listaClientes.get(i).getNombre() + " " + listaClientes.get(i).getApellidos());
+        String menuSeleccionCliente = "Seleccione una opción:\n1. Introducir DNI de cliente existente\n2. Registrar cliente nuevo\n3. Volver";
+
+        boolean salir = false;
+        while (!salir) {
+            Main.imprimirMenu(menuSeleccionCliente);
+            int opcion = Main.recibirOpcion(1, 3);
+
+            switch (opcion) {
+                case 1 -> {
+                    System.out.print("Introduce el DNI del cliente: ");
+                    String dni = scanner.nextLine();
+                    Cliente clienteParaVenta = Cliente.encontrarClientePorDni(listaClientes, dni);
+
+                    if (clienteParaVenta != null) {
+                        // Si se encuentra el cliente, se inicia el proceso de compra
+                        procesoDeCompra(listaVentas, clienteParaVenta, catalogoChocolates, scanner);
+                        salir = true; // La venta ha terminado (o se ha cancelado), salimos del bucle
+                    } else {
+                        System.out.println("Error: No se encontró ningún cliente con ese DNI.");
+                    }
+                }
+                case 2 -> {
+                    // Llama al alta de cliente y luego informa al usuario
+                    Cliente.altaCliente(listaClientes, scanner);
+                    System.out.println("\nCliente registrado. Ahora puede iniciar la venta seleccionando la opción 1.");
+                }
+                case 3 -> {
+                    System.out.println("Volviendo al menú de ventas.");
+                    salir = true; // Salimos del bucle y del método
+                }
+            }
         }
-        int opcionCliente = Main.recibirOpcion(1, listaClientes.size()) - 1;
-        Cliente clienteSeleccionado = listaClientes.get(opcionCliente);
+    }
+
+    /**
+     * Función que gestiona la selección de productos y finaliza la venta
+     * una vez que el cliente ha sido identificado.
+     */
+    private static void procesoDeCompra(ArrayList<Venta> listaVentas, Cliente cliente, ArrayList<Chocolate> catalogoChocolates, Scanner scanner) {
+        System.out.println("\nIniciando venta para el cliente: " + cliente.getNombre() + " " + cliente.getApellidos());
 
         ArrayList<Chocolate> carrito = new ArrayList<>();
         int opcionProducto;
         do {
-            System.out.println("\nSeleccione un producto para añadir (0 para finalizar):");
+            System.out.println("\nSeleccione un producto para añadir al carrito (0 para finalizar):");
             for (int i = 0; i < catalogoChocolates.size(); i++) {
                 Chocolate choco = catalogoChocolates.get(i);
                 System.out.println((i + 1) + ". " + choco.toString());
@@ -142,12 +159,18 @@ public class Venta {
 
             if (opcionProducto != 0) {
                 Chocolate productoSeleccionado = catalogoChocolates.get(opcionProducto - 1);
-                if (productoSeleccionado.getStock() > 0) {
-                    carrito.add(productoSeleccionado);
-                    productoSeleccionado.setStock(productoSeleccionado.getStock() - 1); // Disminuir stock
-                    System.out.println("Producto añadido al carrito. Stock restante: " + productoSeleccionado.getStock());
+
+                System.out.print("Introduce la cantidad (Stock disponible: " + productoSeleccionado.getStock() + "): ");
+                int cantidad = Main.recibirOpcion(1, Integer.MAX_VALUE); // Pide una cantidad (mínimo 1)
+
+                if (cantidad <= productoSeleccionado.getStock()) {
+                    for (int i = 0; i < cantidad; i++) {
+                        carrito.add(productoSeleccionado);
+                    }
+                    productoSeleccionado.setStock(productoSeleccionado.getStock() - cantidad);
+                    System.out.println(cantidad + " unidad(es) del producto añadidas. Stock restante: " + productoSeleccionado.getStock());
                 } else {
-                    System.out.println("Error: Producto sin stock.");
+                    System.out.println("Error: No hay suficiente stock. Solo quedan " + productoSeleccionado.getStock() + " unidades.");
                 }
             }
         } while (opcionProducto != 0);
@@ -155,16 +178,13 @@ public class Venta {
         if (carrito.isEmpty()) {
             System.out.println("Venta cancelada. No se añadieron productos.");
         } else {
-            Venta nuevaVenta = new Venta(clienteSeleccionado, carrito);
+            Venta nuevaVenta = new Venta(cliente, carrito);
             listaVentas.add(nuevaVenta);
             System.out.println("\n¡Venta creada con éxito!");
             System.out.println(nuevaVenta);
         }
     }
 
-    /**
-     * Muestra un listado de todas las ventas realizadas y el importe total de todas ellas.
-     */
     public static void mostrarTodasLasVentas(ArrayList<Venta> listaVentas) {
         System.out.println("\n--- HISTORIAL GENERAL DE VENTAS ---");
         if (listaVentas.isEmpty()) {
@@ -177,13 +197,13 @@ public class Venta {
             System.out.println(venta);
             granTotal += venta.getImporteTotal();
         }
-        System.out.println("-----------------------------------------");
+        System.out.println("-------------------------------------");
         System.out.println("IMPORTE TOTAL DE TODAS LAS VENTAS: " + String.format("%.2f", granTotal) + "€");
-        System.out.println("-----------------------------------------");
+        System.out.println("-------------------------------------");
     }
 
     /**
-     * Gestiona el submenú de operaciones para un cliente específico.
+     * Gestiona las operaciones de ventas para un cliente específico, buscado por DNI.
      */
     private static void gestionarVentasCliente(ArrayList<Venta> listaVentas, ArrayList<Cliente> listaClientes, Scanner scanner) {
         System.out.println("\n--- GESTIONAR VENTAS POR CLIENTE ---");
@@ -192,16 +212,21 @@ public class Venta {
             return;
         }
 
-        System.out.println("Seleccione un cliente:");
-        for (int i = 0; i < listaClientes.size(); i++) {
-            System.out.println((i + 1) + ". " + listaClientes.get(i).getNombre() + " " + listaClientes.get(i).getApellidos());
-        }
-        int opcionCliente = Main.recibirOpcion(1, listaClientes.size()) - 1;
-        Cliente clienteSeleccionado = listaClientes.get(opcionCliente);
+        // CAMBIO: Pide el DNI en lugar de listar los clientes
+        System.out.print("Introduce el DNI del cliente a consultar: ");
+        String dni = scanner.nextLine();
+        Cliente clienteSeleccionado = Cliente.encontrarClientePorDni(listaClientes, dni);
 
+        // Si el cliente no se encuentra, muestra un error y vuelve.
+        if (clienteSeleccionado == null) {
+            System.out.println("Cliente no encontrado.");
+            return;
+        }
+
+        // Si el cliente se encuentra, muestra el submenú de opciones.
         int opcion;
         do {
-            System.out.println("\nOperaciones para: " + clienteSeleccionado.getNombre());
+            System.out.println("\nOperaciones para: " + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellidos());
             Main.imprimirMenu(menuVentasCliente);
             opcion = Main.recibirOpcion(1, 4);
             switch (opcion) {
@@ -213,9 +238,6 @@ public class Venta {
         } while (opcion != 4);
     }
 
-    /**
-     * Lista todas las ventas de un cliente específico.
-     */
     private static void listarVentasDeCliente(ArrayList<Venta> listaVentas, Cliente clienteSeleccionado) {
         System.out.println("\n--- Ventas para el cliente: " + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellidos() + " ---");
         boolean encontradas = false;
@@ -230,9 +252,6 @@ public class Venta {
         }
     }
 
-    /**
-     * Busca ventas de un cliente en una fecha específica.
-     */
     private static void buscarVentaPorFecha(ArrayList<Venta> listaVentas, Cliente clienteSeleccionado, Scanner scanner) {
         System.out.println("\n--- Buscar venta por fecha ---");
         System.out.print("Introduce la fecha a buscar (formato dd/MM/yyyy): ");
@@ -258,9 +277,6 @@ public class Venta {
         }
     }
 
-    /**
-     * Calcula y muestra el gasto total de un cliente.
-     */
     private static void calcularYMostrarTotalCliente(ArrayList<Venta> listaVentas, Cliente clienteSeleccionado) {
         double totalGastado = 0;
         for (Venta venta : listaVentas) {
@@ -268,7 +284,6 @@ public class Venta {
                 totalGastado += venta.getImporteTotal();
             }
         }
-        System.out.println("\nEl cliente " + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellidos() + " ha gastado un total de: " + String.format("%.2f", totalGastado) + "€");
+        System.out.println("\nEl cliente " + clienteSeleccionado.getNombre() + " " + clienteSeleccionado.getApellidos() + " ha hecho compras por un total de: " + String.format("%.2f", totalGastado) + "€");
     }
 }
-

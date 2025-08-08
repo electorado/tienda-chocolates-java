@@ -18,14 +18,12 @@ class ChocolateTest {
      */
     @Test
     void testGeneracionIdCorrecta() {
-        // 1. Preparación (Arrange)
+        // 1. Preparación
         Chocolate chocoEcuador = new Chocolate("Ecuador", 85, 4.50, 100);
         String idEsperado = "ECU85";
-
-        // 2. Acción (Act)
+        // 2. Acción
         String idGenerado = chocoEcuador.getIdProducto();
-
-        // 3. Verificación (Assert)
+        // 3. Verificación
         assertEquals(idEsperado, idGenerado, "El ID no se generó correctamente para un origen largo.");
     }
 
@@ -39,8 +37,7 @@ class ChocolateTest {
         // 1. Preparación
         Chocolate choco1 = new Chocolate("Peru", 90, 6.0, 20);
         Chocolate choco2 = new Chocolate("Peru", 90, 6.5, 30); // Mismo origen y cacao, pero diferente precio/stock
-
-        // 2. Verificación (Act & Assert)
+        // 2. Verificación
         assertTrue(choco1.equals(choco2), "Dos chocolates con el mismo ID deberían ser iguales.");
         assertEquals(choco1.getIdProducto(), choco2.getIdProducto(), "Los IDs deberían ser idénticos.");
     }
@@ -54,7 +51,6 @@ class ChocolateTest {
         // 1. Preparación
         Chocolate chocoPeru = new Chocolate("Peru", 90, 6.0, 20);
         Chocolate chocoGhana = new Chocolate("Ghana", 90, 6.0, 20);
-
         // 2. Verificación
         assertFalse(chocoPeru.equals(chocoGhana), "Dos chocolates con diferente ID no deberían ser iguales.");
     }

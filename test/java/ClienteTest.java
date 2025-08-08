@@ -44,9 +44,9 @@ class ClienteTest {
      */
     @Test
     void setTelefonoCambiaElTelefono() {
-        // Actuamos: cambiamos el teléfono
+        // 1. Acción
         clientePrueba.setTelefono("998877665");
-        // Afirmamos: comprobamos que el cambio se ha realizado
+        // 2. Verificación
         assertEquals("998877665", clientePrueba.getTelefono());
     }
 
@@ -57,8 +57,9 @@ class ClienteTest {
      */
     @Test
     void equalsConMismoDni() {
+        // 1. Preparación
         Cliente otroClienteMismoDni = new Cliente("12345678a", "Carla", "García", "666111222", "carla@suemail.com");
-        // Comprobamos que clientePrueba.equals(otroClienteMismoDni) es true
+        // 2. Verificación
         assertTrue(clientePrueba.equals(otroClienteMismoDni));
     }
 
@@ -68,7 +69,9 @@ class ClienteTest {
      */
     @Test
     void equalsConDiferenteDni() {
+        //1. Preparación
         Cliente otroCliente = new Cliente("11112222C", "Pedro", "Cevallos", "611223344", "pedro@suemail.com");
+        // 2. Verificación
         assertFalse(clientePrueba.equals(otroCliente));
     }
 
@@ -79,10 +82,9 @@ class ClienteTest {
      */
     @Test
     void encontrarClientePorDniCuandoExiste() {
-        // Actuamos: buscamos un DNI que sabemos que existe
+       //1. Preparación
         Cliente encontrado = Cliente.encontrarClientePorDni(listaClientesPrueba, "87654321Z");
-
-        // Afirmamos:
+        //2. Verificación
         assertNotNull(encontrado, "El cliente debería haber sido encontrado (no ser null).");
         assertEquals("87654321Z", encontrado.getDni(), "El DNI del cliente encontrado no es el correcto.");
         assertEquals("Luis", encontrado.getNombre());
@@ -94,10 +96,9 @@ class ClienteTest {
      */
     @Test
     void encontrarClientePorDniCuandoNoExiste() {
-        // Actuamos: buscamos un DNI que NO existe
+        //1. Preparación
         Cliente encontrado = Cliente.encontrarClientePorDni(listaClientesPrueba, "00000000X");
-
-        // Afirmamos: comprobamos que el resultado es null
+        //2. Verificación
         assertNull(encontrado, "No debería encontrar el cliente y debería devolver null.");
     }
 }

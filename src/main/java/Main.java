@@ -5,7 +5,7 @@ import java.util.Scanner;
 /**
  * Clase principal del programa de gestión de una tienda de chocolates.
  * Contiene funciones reutilizables como imprimirMenu y recibirOpcion,
- * Incluye una función para precargar datos de prueba para probar la aplicación facilmente.
+ * Incluye una función que precarga datos para probar la aplicación más fácilmente.
  *
  * @author Pablo Andrés Moncayo Vega
  * @version 3.0 (Añadida función para cargar datos de prueba)
