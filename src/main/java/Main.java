@@ -1,127 +1,255 @@
+import org.example.dao.ClienteDAO;
+import org.example.model.Chocolate;
+import org.example.model.Cliente;
+import org.example.model.Venta;
+
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Clase principal del programa de gestión de una tienda de chocolates.
- * Contiene funciones reutilizables y el punto de entrada de la aplicación.
- *
- * @author Pablo Andrés Moncayo Vega
- * @version 5.0 (Incluye función para ordenar listas de clientes, productos y ventas.)
+ * Adaptado para usar el patrón DAO con la nueva base de datos.
  */
 public class Main {
-
-    // --- Listas principales de la aplicación ---
-    private static ArrayList<Cliente> listaClientes = new ArrayList<>();
-    private static ArrayList<Chocolate> catalogoChocolates = new ArrayList<>();
-    private static ArrayList<Venta> listaVentas = new ArrayList<>();
-
-    // --- Objeto Scanner global ---
     private static Scanner scanner = new Scanner(System.in);
+    private static ClienteDAO clienteDAO = new ClienteDAOImpl();
+    private static ChocolateDAO chocolateDAO = new ChocolateDAOImpl();
+    private static VentaDAO ventaDAO = new VentaDAOImpl();
 
-    // --- Menús de la aplicación ---
-    private static String menuMain = "*** MENÚ PRINCIPAL ***\n" +
-            "1. Gestión de Ventas\n2. Gestión de Clientes\n3. Gestión de Productos\n4. Ordenar y Listar\n5. Salir";
-
-    private static String menuOrdenar = "--- ORDENAR LISTAS ---\n1. Ordenar Clientes\n2. Ordenar Productos\n3. Volver";
-    private static String menuOrdenarClientes = "Ordenar clientes por:\n1. DNI\n2. Nombre\n3. Apellidos";
-    private static String menuOrdenarProductos = "Ordenar productos por:\n1. ID\n2. Origen\n3. Precio\n4. Stock";
-
-
-    /**
-     * Punto de inicio del programa.
-     * Carga los datos de prueba y muestra el menú principal.
-     */
     public static void main(String[] args) {
-        cargarDatosDePrueba();
-
         int opcion;
         do {
-            imprimirMenu(menuMain);
-            opcion = recibirOpcion(1, 5);
+            System.out.println("\n*** MENÚ PRINCIPAL ***");
+            System.out.println("1. Gestión de Ventas");
+            System.out.println("2. Gestión de Clientes");
+            System.out.println("3. Gestión de Productos");
+            System.out.println("4. Salir");
+            System.out.print("Selecciona una opción: ");
+            opcion = recibirOpcion(1, 4);
 
             switch (opcion) {
-                case 1 -> Venta.gestionarVentas(listaVentas, listaClientes, catalogoChocolates, scanner);
-                case 2 -> Cliente.gestionarClientes(listaClientes, scanner);
-                case 3 -> Chocolate.gestionarProductos(catalogoChocolates, scanner);
-                case 4 -> ordenarListas();
-                case 5 -> System.out.println("¡Gracias por usar la aplicación! Hasta pronto.");
+                case 1 -> gestionarVentas();
+                case 2 -> gestionarClientes();
+                case 3 -> gestionarProductos();
+                case 4 -> System.out.println("¡Gracias por usar la aplicación! Hasta pronto.");
             }
-        } while (opcion != 5);
-
-        scanner.close();
+        } while (opcion != 4);
     }
 
-    /**
-     * Muestra un submenú para elegir qué lista ordenar y por qué campo.
-     */
-    public static void ordenarListas() {
+    // --- Gestión de Productos ---
+    private static void gestionarProductos() {
         int opcion;
         do {
-            imprimirMenu(menuOrdenar);
-            opcion = recibirOpcion(1, 3);
+            System.out.println("\n*** MENÚ DE GESTIÓN DE PRODUCTOS ***");
+            System.out.println("1. Alta de nuevo producto");
+            System.out.println("2. Recepción de producto (Añadir stock)");
+            System.out.println("3. Ver inventario");
+            System.out.println("4. Buscar por % de cacao");
+            System.out.println("5. Buscar por origen");
+            System.out.println("6. Volver");
+            System.out.print("Selecciona una opción: ");
+            opcion = recibirOpcion(1, 6);
+
             switch (opcion) {
                 case 1 -> {
-                    imprimirMenu(menuOrdenarClientes);
-                    int opcionCliente = recibirOpcion(1, 3);
-                    switch (opcionCliente) {
-                        case 1 -> listaClientes.sort(Comparator.comparing(Cliente::getDni));
-                        case 2 -> listaClientes.sort(Comparator.comparing(Cliente::getNombre));
-                        case 3 -> listaClientes.sort(Comparator.comparing(Cliente::getApellidos));
+                    System.out.println("\n--- ALTA DE NUEVO PRODUCTO ---");
+                    System.out.print("Introduce el país de origen: ");
+                    String origen = scanner.nextLine();
+                    System.out.print("Introduce el porcentaje de cacao: ");
+                    int porcentaje = Integer.parseInt(scanner.nextLine());
+                    System.out.print("Introduce el precio: ");
+                    double precio = Double.parseDouble(scanner.nextLine().replace(',', '.'));
+                    System.out.print("Introduce la cantidad de unidades a ingresar: ");
+                    int unidades = Integer.parseInt(scanner.nextLine());
+                    
+                    Chocolate nuevo = new Chocolate(origen, porcentaje, precio, unidades);
+                    if (chocolateDAO.getChocolateById(nuevo.getIdProducto()) == null) {
+                        chocolateDAO.addChocolate(nuevo);
+                        System.out.println("Producto dado de alta.");
+                    } else {
+                        System.out.println("Error: El producto ya existe.");
                     }
-                    System.out.println("--- Clientes Ordenados ---");
-                    Cliente.listarClientes(listaClientes);
                 }
                 case 2 -> {
-                    imprimirMenu(menuOrdenarProductos);
-                    int opcionProducto = recibirOpcion(1, 4);
-                    switch (opcionProducto) {
-                        case 1 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getIdProducto));
-                        case 2 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getOrigen));
-                        case 3 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getPrecio));
-                        case 4 -> catalogoChocolates.sort(Comparator.comparing(Chocolate::getStock).reversed());
+                    System.out.print("Introduce el ID del producto para añadir stock: ");
+                    String id = scanner.nextLine().toUpperCase();
+                    Chocolate choco = chocolateDAO.getChocolateById(id);
+                    if (choco != null) {
+                        System.out.print("Introduce la cantidad de unidades a añadir: ");
+                        int unidades = Integer.parseInt(scanner.nextLine());
+                        choco.setStock(choco.getStock() + unidades);
+                        chocolateDAO.updateChocolate(choco);
+                        System.out.println("Stock actualizado.");
+                    } else {
+                        System.out.println("Producto no encontrado.");
                     }
-                    System.out.println("--- Productos Ordenados ---");
-                    Chocolate.verInventario(catalogoChocolates);
                 }
-                case 3 -> System.out.println("Volviendo al menú principal.");
+                case 3 -> {
+                    List<Chocolate> lista = chocolateDAO.getAllChocolates();
+                    lista.forEach(System.out::println);
+                }
+                case 4 -> {
+                    System.out.print("Introduce el porcentaje mínimo de cacao a buscar: ");
+                    int cacao = Integer.parseInt(scanner.nextLine());
+                    List<Chocolate> encontrados = chocolateDAO.findByCacaoPercentage(cacao);
+                    if(encontrados.isEmpty()) System.out.println("No se encontraron productos.");
+                    else encontrados.forEach(System.out::println);
+                }
+                case 5 -> {
+                    System.out.print("Introduce el país de origen a buscar: ");
+                    String origenBuscado = scanner.nextLine();
+                    List<Chocolate> encontrados = chocolateDAO.findByOrigin(origenBuscado);
+                    if(encontrados.isEmpty()) System.out.println("No se encontraron productos.");
+                    else encontrados.forEach(System.out::println);
+                }
             }
-        } while (opcion != 3);
+        } while (opcion != 6);
     }
 
-    /**
-     * Carga datos de prueba para que la aplicación no empiece vacía.
-     */
-    public static void cargarDatosDePrueba() {
-        listaClientes.add(new Cliente("1111111A", "Claudia", "García", "611111111", "cg@suemail.com"));
-        listaClientes.add(new Cliente("3333333C", "Sofía", "Terán", "633333333", "st@suemail.com"));
-        listaClientes.add(new Cliente("2222222B", "Santiago", "Sanchez", "622222222", "ss@suemail.com"));
+    // --- Gestión de Clientes ---
+    private static void gestionarClientes() {
+        int opcion;
+        do {
+            System.out.println("\n*** MENÚ DE GESTIÓN CLIENTES ***");
+            System.out.println("1. Alta de clientes");
+            System.out.println("2. Baja de clientes");
+            System.out.println("3. Modificación");
+            System.out.println("4. Buscar por Email");
+            System.out.println("5. Lista de clientes");
+            System.out.println("6. Volver");
+            System.out.print("Selecciona una opción: ");
+            opcion = recibirOpcion(1, 6);
 
-        catalogoChocolates.add(new Chocolate("Ecuador", 75, 5.50, 20));
-        catalogoChocolates.add(new Chocolate("Costa Rica", 85, 6.20, 15));
-        catalogoChocolates.add(new Chocolate("Ghana", 70, 5.00, 30));
-
-        System.out.println(">>> Datos de prueba cargados: 3 clientes y 3 productos disponibles. <<<");
+            switch (opcion) {
+                case 1 -> {
+                    System.out.print("Introduce el Email: ");
+                    String email = scanner.nextLine();
+                    if (clienteDAO.getClienteByEmail(email) == null) {
+                        System.out.print("Nombre: "); String nombre = scanner.nextLine();
+                        System.out.print("Teléfono: "); String telefono = scanner.nextLine();
+                        clienteDAO.addCliente(new Cliente(nombre, email, telefono));
+                        System.out.println("Cliente añadido.");
+                    } else {
+                        System.out.println("Ya existe un cliente con ese Email.");
+                    }
+                }
+                case 2 -> {
+                    System.out.print("Introduce el ID del cliente a eliminar: ");
+                    int idDel = Integer.parseInt(scanner.nextLine());
+                    if (clienteDAO.getClienteById(idDel) != null) {
+                        clienteDAO.deleteCliente(idDel);
+                        System.out.println("Cliente eliminado.");
+                    } else {
+                        System.out.println("Cliente no encontrado.");
+                    }
+                }
+                case 3 -> {
+                    System.out.print("Introduce el ID del cliente a modificar: ");
+                    int idMod = Integer.parseInt(scanner.nextLine());
+                    Cliente cli = clienteDAO.getClienteById(idMod);
+                    if (cli != null) {
+                        System.out.print("Nuevo nombre (" + cli.getNombre() + "): ");
+                        String n = scanner.nextLine(); if(!n.isEmpty()) cli.setNombre(n);
+                        System.out.print("Nuevo teléfono (" + cli.getTelefono() + "): ");
+                        String t = scanner.nextLine(); if(!t.isEmpty()) cli.setTelefono(t);
+                        System.out.print("Nuevo email (" + cli.getEmail() + "): ");
+                        String e = scanner.nextLine(); if(!e.isEmpty()) cli.setEmail(e);
+                        clienteDAO.updateCliente(cli);
+                        System.out.println("Cliente actualizado.");
+                    } else {
+                        System.out.println("Cliente no encontrado.");
+                    }
+                }
+                case 4 -> {
+                    System.out.print("Introduce el Email del cliente a buscar: ");
+                    String emailBuscado = scanner.nextLine();
+                    Cliente cliente = clienteDAO.getClienteByEmail(emailBuscado);
+                    if (cliente != null) System.out.println(cliente);
+                    else System.out.println("Cliente no encontrado.");
+                }
+                case 5 -> {
+                    List<Cliente> clientes = clienteDAO.getAllClientes();
+                    if (clientes.isEmpty()) System.out.println("No hay clientes.");
+                    else clientes.forEach(System.out::println);
+                }
+            }
+        } while (opcion != 6);
     }
 
-    // --- Funciones ---
+    // --- Gestión de Ventas ---
+    private static void gestionarVentas() {
+        int opcion;
+        do {
+            System.out.println("\n*** GESTIÓN DE VENTAS ***");
+            System.out.println("1. Realizar venta");
+            System.out.println("2. Mostrar todas las ventas");
+            System.out.println("3. Gestionar ventas por cliente");
+            System.out.println("0. Volver");
+            System.out.print("Selecciona una opción: ");
+            opcion = recibirOpcion(1, 4);
 
-    /**
-     * Muestra un menú en consola y pide una opción al usuario.
-     * @param menu Nombre del menú a imprimir.
-     */
-    public static void imprimirMenu(String menu) {
-        System.out.println("\n" + menu);
-        System.out.print("Selecciona una opción: ");
+            switch (opcion) {
+                case 1 -> {
+                    System.out.print("Introduce el Email del cliente: ");
+                    String email = scanner.nextLine();
+                    Cliente cliente = clienteDAO.getClientePorEmail(email);
+                    if (cliente != null) {
+                        List<Chocolate> catalogo = chocolateDAO.getAllChocolates();
+                        List<Chocolate> carrito = new ArrayList<>();
+                        int opProd;
+                        do {
+                            System.out.println("\nSeleccione un producto (0 para finalizar):");
+                            for (int i = 0; i < catalogo.size(); i++) {
+                                System.out.println((i + 1) + ". " + catalogo.get(i));
+                            }
+                            opProd = recibirOpcion(0, catalogo.size());
+                            if (opProd != 0) {
+                                Chocolate prod = catalogo.get(opProd - 1);
+                                System.out.print("Cantidad (Stock: " + prod.getStock() + "): ");
+                                int cant = Integer.parseInt(scanner.nextLine());
+                                if (cant <= prod.getStock()) {
+                                    for(int i = 0; i < cant; i++) carrito.add(prod);
+                                    prod.setStock(prod.getStock() - cant);
+                                    chocolateDAO.updateChocolate(prod); // Actualizar stock
+                                    System.out.println("Añadido.");
+                                } else {
+                                    System.out.println("Stock insuficiente.");
+                                }
+                            }
+                        } while (opProd != 0);
+
+                        if (!carrito.isEmpty()) {
+                            Venta venta = new Venta(cliente, carrito);
+                            ventaDAO.addVenta(venta);
+                            System.out.println("Venta realizada con éxito.");
+                        }
+                    } else {
+                        System.out.println("Cliente no encontrado.");
+                    }
+                }
+                case 2 -> {
+                    List<Venta> ventas = ventaDAO.getAllVentas();
+                    if (ventas.isEmpty()) System.out.println("No hay ventas.");
+                    else ventas.forEach(System.out::println);
+                }
+                case 3 -> {
+                    System.out.print("Introduce el Email del cliente: ");
+                    String email = scanner.nextLine();
+                    Cliente cliente = clienteDAO.getClienteByEmail(email);
+                    if (cliente != null) {
+                        List<Venta> ventasCli = ventaDAO.getVentasByCliente(cliente);
+                        if(ventasCli.isEmpty()) System.out.println("El cliente no tiene ventas.");
+                        else ventasCli.forEach(System.out::println);
+                    } else {
+                        System.out.println("Cliente no encontrado.");
+                    }
+                }
+            }
+        } while (opcion != 4);
     }
 
-    /**
-     * Pide al usuario un número de opción dentro de un rango válido.
-     * @param min El número mínimo aceptado para la opción.
-     * @param max El número máximo aceptado para la opción.
-     * @return El número de opción validado.
-     */
     public static int recibirOpcion(int min, int max) {
         int opcion = 0;
         boolean valida = false;
@@ -130,15 +258,13 @@ public class Main {
                 opcion = scanner.nextInt();
                 scanner.nextLine();
                 if (opcion < min || opcion > max) {
-                    System.out.println("Opción fuera de rango. Intenta de nuevo.");
-                    System.out.print("Selecciona una opción: ");
+                    System.out.println("Opción fuera de rango.");
                 } else {
                     valida = true;
                 }
             } catch (InputMismatchException e) {
-                System.out.println("Entrada inválida. Por favor, introduce un número.");
+                System.out.println("Introduce un número válido.");
                 scanner.nextLine();
-                System.out.print("Selecciona una opción: ");
             }
         }
         return opcion;
