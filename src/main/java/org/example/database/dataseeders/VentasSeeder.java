@@ -18,7 +18,7 @@ public class VentasSeeder {
         VentaDAO ventaDAO = new VentaDAO();
         Random random = new Random();
 
-        // Recuperar datos reales de BD
+        // Recuperamos datos reales de BD
         List<Chocolate> chocolates = chocolateDAO.consultarChocolate();
         List<Cliente> clientes = clienteDAO.consultarCliente();
 
@@ -42,7 +42,7 @@ public class VentasSeeder {
                     continue;
                 }
 
-                // restamos 1 unidad al stock
+                // restamos una unidad al stock
                 prod.setStock(prod.getStock() - 1);
                 chocolateDAO.modificarChocolate(prod);
 
@@ -60,6 +60,6 @@ public class VentasSeeder {
             }
         }
 
-        System.out.println("¡Generación de datos (incluidas ventas) finalizada!");
+        System.out.println("¡Generación de datos finalizada!");
     }
 }
