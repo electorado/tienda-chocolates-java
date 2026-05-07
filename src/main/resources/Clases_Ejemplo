@@ -1,0 +1,210 @@
+Clase Main:
+
+package clase0316CRUDDAO;
+
+import clase0316CRUDDAO.org.example.dao.CursoDAO;
+import clase0316CRUDDAO.org.example.model.Curso;
+
+import java.util.List;
+import java.util.Scanner;
+
+//DAO significa Data Access Object, es un patrón de diseño.
+// Su objetivo es separar la "lógica de negocio" (tu menú, tus cálculos) de la "lógica de acceso a datos" (el SQL).
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        CursoDAO org.example.dao = new CursoDAO();
+
+        int opcion;
+
+
+        do {
+            System.out.println("-------------LISTA DE OPCIONES---------------");
+            System.out.println("1. Lista de cursos");
+            System.out.println("2. Insertar cursos");
+            System.out.println("3. Actualizar profesor");
+            System.out.println("4. Eliminar cursos");
+            System.out.println("5. Eliminar según créditos");
+            System.out.println("0. salir");
+            opcion = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (opcion) {
+                case 1:
+                    List<Curso> cursos = org.example.dao.consultarCurso();
+                    cursos.forEach(curso -> System.out.println(curso));
+                    break;
+                case 2:
+                    System.out.println("Ingresa el nombre del curso");
+                    String nombre = scanner.nextLine();
+                    System.out.println("Ingresa el profesor del curso");
+                    String profesor = scanner.nextLine();
+                    System.out.println("Ingresa los créditos del curso");
+                    int creditos = scanner.nextInt();
+
+                    org.example.dao.insertarCurso(new Curso(nombre, profesor, creditos));
+                    break;
+                case 3:
+                    System.out.println("Ingresa ID curso: ");
+                    int id = scanner.nextInt();
+                    scanner.nextLine();
+
+                    System.out.println("Nuevo nombre del profesor");
+                    String nombreProfesor = scanner.nextLine();
+
+                    org.example.dao.actualizarProfesor(id, nombreProfesor);
+                    break;
+                case 4:
+                    System.out.println("Ingresa el ID del curso a eliminar: ");
+                    int eliminar = scanner.nextInt();
+                    org.example.dao.eliminarCurso(eliminar);
+                    break;
+                case 5:
+                    System.out.println("Ingresa el curso a eliminar: ");
+                    int eliminarCurso = scanner.nextInt();
+                    org.example.dao.eliminarCursoSegunCreditos(eliminarCurso);
+                    break;
+            }
+        }while (opcion != 0);
+
+        scanner.close();
+    }
+}
+
+Clase DatabaseConnection:
+
+package clase0316CRUDDAO.org.example.database;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DatabaseConnection {
+    private static final String URL = "jdbc:postgresql://localhost:5432/universidad";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "p4nKdr3s%1977";
+
+    public static Connection conectar(){
+        try{
+            return DriverManager.getConnection(URL,USER,PASSWORD);
+        }catch(SQLException e){
+            throw new RuntimeException("Error de conexión", e);
+        }
+    }
+}
+
+
+Clase Curso:
+
+package clase0316CRUDDAO.org.example.model;
+
+public class Curso {
+    private int id;
+    private String nombre;
+    private String profesor;
+    private int creditos;
+
+    public Curso() {}
+    public Curso(String nombre, String profesor, int creditos) {
+        this.nombre = nombre;
+        this.profesor = profesor;
+        this.creditos = creditos;
+    }
+
+    public Curso(int id, String nombre, String profesor, int creditos) {
+        this.id = id;
+        this.nombre = nombre;
+        this.profesor = profesor;
+        this.creditos = creditos;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getProfesor() {
+        return profesor;
+    }
+    public void setProfesor(String profesor) {
+        this.profesor = profesor;
+    }
+
+    public int getCreditos() {
+        return creditos;
+    }
+    public void setCreditos(int creditos) {
+        this.creditos = creditos;
+    }
+
+    @Override
+    public String toString() {
+        return "Curso{" +
+                "nombre='" + nombre + '\'' +
+                ", profesor='" + profesor + '\'' +
+                ", creditos=" + creditos +
+    '}';
+    }
+}
+
+
+Clase CursoDAO:
+
+package clase0316CRUDDAO.org.example.model;
+
+public class Curso {
+    private int id;
+    private String nombre;
+    private String profesor;
+    private int creditos;
+
+    public Curso() {}
+    public Curso(String nombre, String profesor, int creditos) {
+        this.nombre = nombre;
+        this.profesor = profesor;
+        this.creditos = creditos;
+    }
+
+    public Curso(int id, String nombre, String profesor, int creditos) {
+        this.id = id;
+        this.nombre = nombre;
+        this.profesor = profesor;
+        this.creditos = creditos;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getProfesor() {
+        return profesor;
+    }
+    public void setProfesor(String profesor) {
+        this.profesor = profesor;
+    }
+
+    public int getCreditos() {
+        return creditos;
+    }
+    public void setCreditos(int creditos) {
+        this.creditos = creditos;
+    }
+
+    @Override
+    public String toString() {
+        return "Curso{" +
+                "nombre='" + nombre + '\'' +
+                ", profesor='" + profesor + '\'' +
+                ", creditos=" + creditos +
+    '}';
+    }
+}
+
+
+

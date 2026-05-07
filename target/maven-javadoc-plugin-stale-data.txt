@@ -1,0 +1,57 @@
+-J-Duser.language=
+-J-Duser.country=
+@options
+@packages
+@argfile
+-classpath
+'C:/Users/wagza/.m2/repository/org/postgresql/postgresql/42.7.3/postgresql-42.7.3.jar'
+-encoding
+'UTF-8'
+-protected
+-source
+'21'
+-sourcepath
+'D:/Proyectos DAM/tienda-de-chocolate/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2026. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'D:/Proyectos DAM/tienda-de-chocolate/docs/apidocs'
+-docencoding
+'UTF-8'
+-doctitle
+'tienda-de-chocolate 1.0-SNAPSHOT API'
+-use
+-version
+-windowtitle
+'tienda-de-chocolate 1.0-SNAPSHOT API'
+org.example.dao
+org.example.database
+org.example.database.dataseeders
+org.example.model
+org.example.service
+org.example.util
+'D:/Proyectos DAM/tienda-de-chocolate/src/main/java/Main.java'
+C:\Users\wagza\.m2\repository\org\postgresql\postgresql\42.7.3\postgresql-42.7.3.jar = 1778144430762
+D:\Proyectos DAM\tienda-de-chocolate\src\main\java\Main.java = 1778094605009
+D:\Proyectos DAM\tienda-de-chocolate\src\main\java = 1778094605012
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\allclasses-index.html = 1778150316783
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\allpackages-index.html = 1778150316786
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\element-list = 1778150316673
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\help-doc.html = 1778150316813
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\index-all.html = 1778150316806
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\index.html = 1778150316772
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\Main.html = 1778150316623
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\member-search-index.js = 1778150316789
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\module-search-index.js = 1778150316787
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\overview-summary.html = 1778150316809
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\overview-tree.html = 1778150316768
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\package-search-index.js = 1778150316788
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\package-summary.html = 1778150316677
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\package-tree.html = 1778150316681
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\package-use.html = 1778150316757
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\search.html = 1778150316806
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\tag-search-index.js = 1778150316789
+D:\Proyectos DAM\tienda-de-chocolate\docs\apidocs\type-search-index.js = 1778150316788
