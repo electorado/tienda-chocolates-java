@@ -11,8 +11,6 @@
     <properties>
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
-1</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -65,8 +63,6 @@
                 <configuration>
                     <!-- Configuramos para que la documentación se genere en /docs/ -->
                     <outputDirectory>${project.basedir}/docs</outputDirectory>
-                    <reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
-                    <destDir>docs</destDir>
                 </configuration>
                 <executions>
                     <execution>
@@ -78,4 +74,5 @@
                 </executions>
             </plugin>
         </plugins>
-    </build></project>
+    </build>
+</project>

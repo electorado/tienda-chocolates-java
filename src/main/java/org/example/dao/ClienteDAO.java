@@ -20,8 +20,6 @@ public class ClienteDAO {
             ps.setString(3, cliente.getEmail());
 
             ps.executeUpdate();
-            ps.close();
-            conn.close();
             System.out.println("Cliente insertado correctamente");
 
         } catch (SQLException e) {
@@ -46,9 +44,6 @@ public class ClienteDAO {
                 );
                 clientes.add(cliente);
             }
-            rs.close();
-            ps.close();
-            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al consultar clientes", e);
@@ -75,9 +70,6 @@ public class ClienteDAO {
                             rs.getString("telefono")
                     );
                 }
-                rs.close();
-                ps.close();
-                conn.close();
             }
 
         } catch (SQLException e) {
@@ -99,8 +91,6 @@ public class ClienteDAO {
             ps.setInt(4, cliente.getClienteId());
 
             ps.executeUpdate();
-            ps.close();
-            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al modificar cliente", e);
@@ -117,8 +107,6 @@ public class ClienteDAO {
             ps.setString(2, email);
 
             ps.executeUpdate();
-            ps.close();
-            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al eliminar cliente", e);
