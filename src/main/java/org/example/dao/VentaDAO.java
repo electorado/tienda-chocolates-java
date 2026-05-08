@@ -83,7 +83,7 @@ public class VentaDAO {
                 SELECT v.venta_id, v.fecha_venta, v.total_venta,
                        c.cliente_id, c.nombre, c.email, c.telefono
                 FROM venta v
-                JOIN clientes c ON v.cliente_id = c.cliente_id
+                JOIN cliente c ON v.cliente_id = c.cliente_id
                 ORDER BY v.fecha_venta
                 """;
 
@@ -170,7 +170,7 @@ public class VentaDAO {
         String sql = """
                 SELECT p.producto_id, p.origen, p.porcentaje_cacao, p.precio, p.stock, dv.cantidad
                 FROM detalle_venta dv
-                JOIN productos p ON dv.producto_id = p.producto_id
+                JOIN producto p ON dv.producto_id = p.producto_id
                 WHERE dv.venta_id = ?
                 """;
 
