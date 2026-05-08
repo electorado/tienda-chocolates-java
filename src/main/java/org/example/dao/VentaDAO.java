@@ -111,6 +111,9 @@ public class VentaDAO {
                 venta.setChocolatesVendidos(obtenerChocolatesPorVenta(rs.getInt("venta_id"), conn));
                 ventas.add(venta);
             }
+            ps.close();
+            rs.close();
+            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al consultar ventas", e);
@@ -148,7 +151,11 @@ public class VentaDAO {
                     venta.setChocolatesVendidos(obtenerChocolatesPorVenta(rs.getInt("venta_id"), conn));
                     ventas.add(venta);
                 }
+                ps.close();
+                rs.close();
+                conn.close();
             }
+
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al buscar ventas por cliente", e);
@@ -185,6 +192,9 @@ public class VentaDAO {
                         chocolates.add(chocolate);
                     }
                 }
+                ps.close();
+                rs.close();
+                conn.close();
             }
 
         } catch (SQLException e) {
@@ -224,6 +234,9 @@ public class VentaDAO {
                                 " | Facturación: " + String.format("%.2f", rs.getDouble("total_facturado")) + "€"
                 );
             }
+            ps.close();
+            rs.close();
+            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al obtener el top 5 de productos más vendidos", e);
@@ -261,6 +274,9 @@ public class VentaDAO {
                                 " | Total gastado: " + String.format("%.2f", rs.getDouble("total_gastado")) + "€"
                 );
             }
+            ps.close();
+            rs.close();
+            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al obtener el top 5 de clientes del mes", e);

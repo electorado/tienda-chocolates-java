@@ -22,6 +22,8 @@ public class ChocolateDAO {
             ps.setInt(5, chocolate.getStock());
 
             ps.executeUpdate();
+            ps.close();
+            conn.close();
             System.out.println("Chocolate insertado correctamente");
 
         } catch (SQLException e) {
@@ -47,6 +49,9 @@ public class ChocolateDAO {
                 );
                 chocolates.add(chocolate);
             }
+            rs.close();
+            ps.close();
+            conn.close();
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al consultar chocolates", e);
@@ -74,7 +79,12 @@ public class ChocolateDAO {
                             rs.getInt("stock")
                     );
                 }
+                rs.close();
+                ps.close();
+                conn.close();
             }
+
+
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al buscar chocolate por ID", e);
@@ -96,6 +106,9 @@ public class ChocolateDAO {
             ps.setString(5, chocolate.getIdProducto());
 
             ps.executeUpdate();
+            ps.close();
+            conn.close();
+            System.out.println("Chocolate modificado/añadido correctamente");
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al modificar chocolate", e);
@@ -123,7 +136,11 @@ public class ChocolateDAO {
                     );
                     chocolates.add(chocolate);
                 }
+                rs.close();
+                ps.close();
+                conn.close();
             }
+
 
         } catch (SQLException e) {
             throw new RuntimeException("Error al buscar chocolates por origen y cacao", e);
