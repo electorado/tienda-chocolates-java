@@ -21,3 +21,11 @@
 *.tmp
 *.temp
 .DS_Store
+
+### Secretos y Entorno ###
+.env
+.env.local
+
+### Java / Maven ###
+target/
+*.class
