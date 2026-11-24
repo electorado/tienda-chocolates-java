@@ -83,7 +83,3 @@ CREATE TABLE detalle_venta (
     ```
 4.  Sigue las instrucciones que aparecen en el menú de la consola para interactuar con la aplicación.
 
-## Autoría y Licencia
-
-*   **Autor**: [Tu Nombre Aquí]
-*   **Licencia**: Este proyecto está bajo la Licencia MIT. Puedes ver el archivo `LICENSE` para más detalles.
